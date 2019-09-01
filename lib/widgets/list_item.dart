@@ -27,6 +27,10 @@ class _ListItemState extends State<ListItem> {
     final double _itemHeight = _height * .1;
     return Dismissible(
       key: Key("${_item.id}"),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direction){
+
+      },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         height: _itemHeight,

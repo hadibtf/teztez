@@ -15,9 +15,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _query();
-    });
+    _query();
   }
 
   @override
@@ -49,21 +47,22 @@ class _MainPageState extends State<MainPage> {
     };
     final id = await _dataBaseHelper.insert(row);
     print('inserted row id: $id');
+    setState(() {
+      _list.add(Todo(id, "Hello, World!", false));
+    });
   }
 
   void _query() async {
     final allRows = await _dataBaseHelper.queryAllRows();
     print('query all rows:');
-    allRows.forEach(
-      (row) =>
-//          print(row)
-          _list.add(
-        Todo(
-          row[DatabaseHelper.columnId],
-          row[DatabaseHelper.columnTodoDescription],
-          row[DatabaseHelper.columnIsDone] == 0 ? false : true,
-        ),
-      ),
-    );
+    allRows.forEach((row) {
+      print(row);
+      setState(() {
+        _list.add(Todo(
+            row[DatabaseHelper.columnId],
+            row[DatabaseHelper.columnTodoDescription],
+            row[DatabaseHelper.columnIsDone] == 0 ? false : true));
+      });
+    });
   }
 }
