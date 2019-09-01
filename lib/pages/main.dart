@@ -1,68 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:teztez_app/scp_model/scope.dart';
 import '../widgets/list_item.dart';
 import '../models/todo_model.dart';
-import '../database/DatabaseHelper.dart';
+import '../database/database_helper.dart';
 
-class MainPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  final DatabaseHelper _dataBaseHelper = DatabaseHelper.instance;
-  List<Todo> _list = List<Todo>();
-
-  @override
-  void initState() {
-    super.initState();
-    _query();
-  }
-
+class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ScopedModelDescendant<Scope>(
+      builder: (BuildContext context, Widget child, Scope model) {
+        return Scaffold(
 //      backgroundColor: Colors.grey,
-      appBar: AppBar(title: Text("Todo")),
-      body: ListView.builder(
-        itemCount: _list.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListItem(
-            item: _list[index],
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _insert();
-        },
-      ),
+          appBar: AppBar(title: Text("Todo")),
+          body: ListView.builder(
+            itemCount: model.todoList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListItem(model.todoList[index]);
+            },
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              model.insert();
+              model.getTodos();
+            },
+          ),
+        );
+      },
     );
-  }
-
-  void _insert() async {
-    // row to insert
-    Map<String, dynamic> row = {
-      DatabaseHelper.columnIsDone: 0,
-      DatabaseHelper.columnTodoDescription: "Hello, World!"
-    };
-    final id = await _dataBaseHelper.insert(row);
-    print('inserted row id: $id');
-    setState(() {
-      _list.add(Todo(id, "Hello, World!", false));
-    });
-  }
-
-  void _query() async {
-    final allRows = await _dataBaseHelper.queryAllRows();
-    print('query all rows:');
-    allRows.forEach((row) {
-      print(row);
-      setState(() {
-        _list.add(Todo(
-            row[DatabaseHelper.columnId],
-            row[DatabaseHelper.columnTodoDescription],
-            row[DatabaseHelper.columnIsDone] == 0 ? false : true));
-      });
-    });
   }
 }
