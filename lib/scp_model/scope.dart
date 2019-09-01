@@ -12,7 +12,7 @@ class Scope extends Model {
     return List.of(_todos);
   }
 
-  void getTodos() async {
+  void updateTodoList() async {
     final List<Map<String, dynamic>> allRows = await _dataBaseHelper.queryAllRows();
     _todos = List.generate(
       allRows.length,
@@ -33,7 +33,7 @@ class Scope extends Model {
     };
     final id = await _dataBaseHelper.insert(row);
     print('inserted row id: $id');
-    getTodos();
+    updateTodoList();
   }
 
   void query() async {
@@ -43,5 +43,19 @@ class Scope extends Model {
       print(row);
     });
     notifyListeners();
+  }
+
+  void update(Map<String, dynamic> map) async {
+    final rowsAffected = await _dataBaseHelper.update(map);
+    print('updated $rowsAffected row(s)');
+    updateTodoList();
+  }
+
+  void delete(int id) async {
+    // Assuming that the number of rows is the id for the last row.
+//    final id = await _dataBaseHelper.queryRowCount();
+    final rowsDeleted = await _dataBaseHelper.delete(id);
+    print('deleted $rowsDeleted row(s): row $id');
+    updateTodoList();
   }
 }

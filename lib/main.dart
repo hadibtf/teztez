@@ -16,7 +16,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    _scope.getTodos();
+    _scope.updateTodoList();
   }
 
   // This widget is the root of your application.

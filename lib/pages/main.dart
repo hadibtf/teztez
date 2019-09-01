@@ -22,7 +22,7 @@ class MainPage extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               model.insert();
-              model.getTodos();
+              model.updateTodoList();
             },
           ),
         );
