@@ -4,7 +4,12 @@ import 'package:teztez_app/scp_model/scope.dart';
 import 'package:toast/toast.dart';
 import '../widgets/list_item.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _description;
 
@@ -13,15 +18,10 @@ class MainPage extends StatelessWidget {
     return ScopedModelDescendant<Scope>(
       builder: (BuildContext context, Widget child, Scope model) {
         return Scaffold(
-          drawer: _buildDrawer(context),
+          drawer: _buildDrawer(context, model),
 //      backgroundColor: Colors.grey,
           appBar: AppBar(title: Text("Todo")),
-          body: ListView.builder(
-            itemCount: model.todoList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListItem(model.todoList[index]);
-            },
-          ),
+          body: _buildListView(),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () {
@@ -51,7 +51,8 @@ class MainPage extends StatelessWidget {
                                 },
                                 validator: (String value) {
                                   String errorMsg;
-                                  if (value.isEmpty) errorMsg = "Input can't be empty!";
+                                  if (value.isEmpty)
+                                    errorMsg = "Input can't be empty!";
                                   return errorMsg;
                                 },
                               ),
@@ -103,6 +104,19 @@ class MainPage extends StatelessWidget {
     );
   }
 
+  Widget _buildListView() {
+    return ScopedModelDescendant<Scope>(
+      builder: (BuildContext context, Widget child, Scope model) {
+        return ListView.builder(
+          itemCount: model.todoList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListItem(model.currentList[index]);
+          },
+        );
+      },
+    );
+  }
+
   void addToList(Scope model, BuildContext context) {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
@@ -111,7 +125,7 @@ class MainPage extends StatelessWidget {
     Navigator.of(context).pop();
   }
 
-  Widget _buildDrawer(BuildContext context) {
+  Widget _buildDrawer(BuildContext context, Scope model) {
     return Drawer(
       child: Column(
         children: <Widget>[
@@ -126,14 +140,29 @@ class MainPage extends StatelessWidget {
             ),
             title: Text("Done"),
             onTap: () {
-              Toast.show("Hello world", context, duration: Toast.LENGTH_LONG);
+              setState(() {
+                model.setCurrentList(CurrentList.DONE);
+              });
             },
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.list),
             title: Text('Todo List'),
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                model.setCurrentList(CurrentList.TODO);
+              });
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text('Todo All'),
+            onTap: () {
+              setState(() {
+                model.setCurrentList(CurrentList.ALL);
+              });
+            },
           )
         ],
       ),

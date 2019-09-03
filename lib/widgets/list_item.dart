@@ -11,7 +11,6 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseHelper _dataBaseHelper = DatabaseHelper.instance;
     final double _height = MediaQuery.of(context).size.height;
     final double _itemHeight = _height * .1;
     return ScopedModelDescendant<Scope>(
