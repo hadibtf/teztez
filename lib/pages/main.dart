@@ -4,12 +4,7 @@ import 'package:teztez_app/scp_model/scope.dart';
 import 'package:toast/toast.dart';
 import '../widgets/list_item.dart';
 
-class MainPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
+class MainPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _description;
 
@@ -110,7 +105,7 @@ class _MainPageState extends State<MainPage> {
         return ListView.builder(
           itemCount: model.todoList.length,
           itemBuilder: (BuildContext context, int index) {
-            return ListItem(model.currentList[index]);
+            return ListItem(model.todoList[index]);
           },
         );
       },
@@ -131,8 +126,17 @@ class _MainPageState extends State<MainPage> {
         children: <Widget>[
           AppBar(
             automaticallyImplyLeading: false,
-            title: Text("Menu"),
+            title: Text("Lists"),
           ),
+          ListTile(
+            leading: Icon(Icons.list,color: Colors.blue,),
+            title: Text('All'),
+            onTap: () {
+              model.setCurrentList(CurrentList.ALL);
+              Navigator.pop(context);
+            },
+          ),
+          Divider(),
           ListTile(
             leading: Icon(
               Icons.done,
@@ -140,30 +144,19 @@ class _MainPageState extends State<MainPage> {
             ),
             title: Text("Done"),
             onTap: () {
-              setState(() {
-                model.setCurrentList(CurrentList.DONE);
-              });
+              model.setCurrentList(CurrentList.DONE);
+              Navigator.pop(context);
             },
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.list),
-            title: Text('Todo List'),
+            leading: Icon(Icons.done_all,color: Colors.green,),
+            title: Text('Todo'),
             onTap: () {
-              setState(() {
-                model.setCurrentList(CurrentList.TODO);
-              });
+              model.setCurrentList(CurrentList.TODO);
+              Navigator.pop(context);
             },
           ),
-          ListTile(
-            leading: Icon(Icons.list),
-            title: Text('Todo All'),
-            onTap: () {
-              setState(() {
-                model.setCurrentList(CurrentList.ALL);
-              });
-            },
-          )
         ],
       ),
     );

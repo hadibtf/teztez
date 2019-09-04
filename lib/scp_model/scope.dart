@@ -7,44 +7,40 @@ enum CurrentList { ALL, TODO, DONE }
 
 class Scope extends Model {
   final DatabaseHelper _dataBaseHelper = DatabaseHelper.instance;
-  List<Todo> _all = [];
-  List<Todo> _currentList = [];
+  List<Todo> _todoList = [];
 
-  List<Todo> get all => _all;
+  List<Todo> get todoList => List.of(_todoList);
 
-  List<Todo> get done => List.of(_all.where((Todo todo) => todo.isDone == true));
-
-  List<Todo> get todoList => List.of(_all.where((Todo todo) => todo.isDone == false));
-
-  List<Todo> get currentList => _currentList;
-
-  void setCurrentList(CurrentList currentList) {
+  void setCurrentList(CurrentList currentList) async {
     switch (currentList) {
       case CurrentList.ALL:
-        _currentList = all;
+        _todoList = await updateListFromDatabase();
         break;
 
       case CurrentList.TODO:
-        _currentList = todoList;
+        final _list = await updateListFromDatabase();
+        _todoList = List.of(_list.where((Todo todo) => todo.isDone == false));
         break;
 
       case CurrentList.DONE:
-        _currentList = done;
+        final _list = await updateListFromDatabase();
+        _todoList = List.of(_list.where((Todo todo) => todo.isDone == true));
         break;
     }
   }
 
-  void setInitialCurrentList() async => _currentList = await updateListFromDatabase();
+  void setInitialCurrentList() async => _todoList = await updateListFromDatabase();
 
   //Database methods
   void updateTodoList() async {
-    _all = await updateListFromDatabase();
+    _todoList = await updateListFromDatabase();
     notifyListeners();
   }
 
-  Future updateListFromDatabase() async {
-    final List<Map<String, dynamic>> allRows = await _dataBaseHelper.queryAllRows();
-     final _list = List.generate(
+  updateListFromDatabase() async {
+    final List<Map<String, dynamic>> allRows =
+        await _dataBaseHelper.queryAllRows();
+    final _list = List.generate(
       allRows.length,
       (i) => Todo(
         allRows[i][DatabaseHelper.columnId],
