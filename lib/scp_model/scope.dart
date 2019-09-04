@@ -32,22 +32,15 @@ class Scope extends Model {
   void setInitialCurrentList() async => _todoList = await updateListFromDatabase();
 
   //Database methods
-  void updateTodoList() async {
-    _todoList = await updateListFromDatabase();
-    notifyListeners();
-  }
+  void updateTodoList() async => _todoList = await updateListFromDatabase();
 
   updateListFromDatabase() async {
-    final List<Map<String, dynamic>> allRows =
-        await _dataBaseHelper.queryAllRows();
-    final _list = List.generate(
-      allRows.length,
-      (i) => Todo(
+    final List<Map<String, dynamic>> allRows = await _dataBaseHelper.queryAllRows();
+    final _list = List.generate(allRows.length, (i) => Todo(
         allRows[i][DatabaseHelper.columnId],
         allRows[i][DatabaseHelper.columnTodoDescription],
         allRows[i][DatabaseHelper.columnIsDone] == 0 ? false : true,
-      ),
-    );
+      ));
     notifyListeners();
     return _list;
   }
