@@ -6,15 +6,14 @@ import '../widgets/list_item.dart';
 
 class MainPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _description;
 
   @override
   Widget build(BuildContext context) {
+    String _description;
     return ScopedModelDescendant<Scope>(
       builder: (BuildContext context, Widget child, Scope model) {
         return Scaffold(
           drawer: _buildDrawer(context, model),
-//      backgroundColor: Colors.grey,
           appBar: AppBar(title: Text("Todo")),
           body: _buildListView(),
           floatingActionButton: FloatingActionButton(
@@ -62,8 +61,8 @@ class MainPage extends StatelessWidget {
                                       child: FlatButton(
                                         textColor: Colors.blue,
                                         child: Text("Add"),
-                                        onPressed: () =>
-                                            addToList(model, context),
+                                        onPressed: () => addToList(
+                                            model, context, _description),
                                       ),
                                     ),
                                   ),
@@ -112,10 +111,10 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  void addToList(Scope model, BuildContext context) {
+  void addToList(Scope model, BuildContext context, String description) {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    model.insert(_description);
+    model.insert(description);
     Toast.show("Added", context);
     Navigator.of(context).pop();
   }
@@ -129,7 +128,10 @@ class MainPage extends StatelessWidget {
             title: Text("Lists"),
           ),
           ListTile(
-            leading: Icon(Icons.list,color: Colors.blue,),
+            leading: Icon(
+              Icons.list,
+              color: Colors.blue,
+            ),
             title: Text('All'),
             onTap: () {
               model.setCurrentList(CurrentList.ALL);
@@ -150,7 +152,10 @@ class MainPage extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.done_all,color: Colors.green,),
+            leading: Icon(
+              Icons.done_all,
+              color: Colors.green,
+            ),
             title: Text('Todo'),
             onTap: () {
               model.setCurrentList(CurrentList.TODO);
