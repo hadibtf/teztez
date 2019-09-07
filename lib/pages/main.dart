@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teztez_app/scp_model/scope.dart';
+import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
 import '../widgets/list_item.dart';
 
@@ -19,6 +20,7 @@ class MainPage extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () {
+              print('${DateFormat.yMd().format(DateTime.now())}');/**just a test to show the datetime*/
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -61,8 +63,7 @@ class MainPage extends StatelessWidget {
                                       child: FlatButton(
                                         textColor: Colors.blue,
                                         child: Text("Add"),
-                                        onPressed: () => addToList(
-                                            model, context, _description),
+                                        onPressed: () => addToList(model, context, _getDateString()),
                                       ),
                                     ),
                                   ),
@@ -166,4 +167,6 @@ class MainPage extends StatelessWidget {
       ),
     );
   }
+
+  String _getDateString() => DateFormat('kk:mm:ss \n EEE d MMM').format(DateTime.now());
 }
